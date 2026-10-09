@@ -127,11 +127,6 @@ img {
   background: hsla(var(--primary), 0.9);
 }
 
-.btn-primary.is-loading {
-  opacity: 0.75;
-  pointer-events: none;
-}
-
 /* Navbar */
 .navbar {
   position: fixed;
@@ -237,10 +232,10 @@ img {
   border-radius: 9999px;
   pointer-events: none;
   background:
-    radial-gradient(circle at 30% 40%, rgba(56,189,248,0.55), transparent 55%),
-    radial-gradient(circle at 70% 50%, rgba(217,70,239,0.6), transparent 60%),
-    radial-gradient(circle at 50% 60%, rgba(139,92,246,0.7), transparent 65%);
-  filter: blur(28px);
+    radial-gradient(circle at 32% 36%, rgba(167,139,250,0.55), transparent 55%),
+    radial-gradient(circle at 68% 42%, rgba(192,38,211,0.5), transparent 60%),
+    radial-gradient(circle at 50% 62%, rgba(124,58,237,0.8), transparent 65%);
+  filter: blur(30px);
   animation: smoke-pulse 6s ease-in-out infinite;
 }
 

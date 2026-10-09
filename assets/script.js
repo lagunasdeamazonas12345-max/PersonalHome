@@ -1,10 +1,6 @@
 (function () {
   "use strict";
 
-  // ---- Config -----------------------------------------------------------
-  // Public Supabase storage bucket where the APK files are hosted.
-  var SUPABASE_URL = "https://queeschxvtpizvdqxxgs.supabase.co";
-
   // ---- Footer year --------------------------------------------------------
   var yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
@@ -98,45 +94,7 @@
     if (hero) requestAnimationFrame(function () { hero.classList.add("is-visible"); });
   })();
 
-  // ---- APK download --------------------------------------------------------
-  (function downloads() {
-    var buttons = document.querySelectorAll(".app-download");
-
-    buttons.forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var fileName = btn.getAttribute("data-file");
-        var downloadName = btn.getAttribute("data-name") || fileName;
-        var url = SUPABASE_URL + "/storage/v1/object/public/apks/" + fileName;
-        var label = btn.querySelector(".btn-label");
-        var originalLabel = label ? label.textContent : null;
-
-        btn.classList.add("is-loading");
-        if (label) label.textContent = "Descargando...";
-
-        fetch(url)
-          .then(function (res) {
-            if (!res.ok) throw new Error("network");
-            return res.blob();
-          })
-          .then(function (blob) {
-            var blobUrl = URL.createObjectURL(blob);
-            var a = document.createElement("a");
-            a.href = blobUrl;
-            a.download = downloadName;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(blobUrl);
-          })
-          .catch(function () {
-            // Fallback: open the direct link so the browser handles the download.
-            window.open(url, "_blank");
-          })
-          .finally(function () {
-            btn.classList.remove("is-loading");
-            if (label && originalLabel) label.textContent = originalLabel;
-          });
-      });
-    });
-  })();
+  // Note: APK downloads no longer need JavaScript — the button in index.html
+  // is a plain <a href="assets/apks/..." download> link, so the browser
+  // handles the download natively. Nothing else to wire up here.
 })();
