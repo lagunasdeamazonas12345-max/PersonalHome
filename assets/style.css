@@ -32,7 +32,7 @@ html {
 
 body {
   margin: 0;
-  background: hsl(var(--background));
+  background: #0a0820;
   color: hsl(var(--foreground));
   font-family: 'Inter', system-ui, sans-serif;
   -webkit-tap-highlight-color: transparent;
@@ -79,21 +79,10 @@ img {
   border: 0;
 }
 
-/* Starfield canvas */
-#starfield {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Glass / glow utilities */
+/* Barra superior: fondo translúcido SIN backdrop-filter (el blur sobre un
+   fondo animado obliga a repintar cada frame y gasta mucha GPU). */
 .glass-surface {
-  background: hsla(var(--surface-glass), 0.05);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(10, 8, 32, 0.72);
 }
 
 .text-glow {
@@ -189,24 +178,6 @@ img {
   z-index: 1;
 }
 
-.hero-bg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.4;
-}
-
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom,
-    hsla(var(--background), 0.3),
-    hsla(var(--background), 0.7) 50%,
-    hsl(var(--background)) 100%);
-}
-
 .hero-content {
   position: relative;
   z-index: 10;
@@ -226,16 +197,15 @@ img {
   justify-content: center;
 }
 
+/* Aura del logo: solo degradados (sin filter: blur, que es costoso). */
 .hero-glow {
   position: absolute;
-  inset: 0;
-  border-radius: 9999px;
+  inset: -35%;
   pointer-events: none;
   background:
-    radial-gradient(circle at 32% 36%, rgba(167,139,250,0.55), transparent 55%),
-    radial-gradient(circle at 68% 42%, rgba(192,38,211,0.5), transparent 60%),
-    radial-gradient(circle at 50% 62%, rgba(124,58,237,0.8), transparent 65%);
-  filter: blur(30px);
+    radial-gradient(closest-side at 38% 42%, rgba(167,139,250,0.40), transparent 85%),
+    radial-gradient(closest-side at 62% 46%, rgba(192,38,211,0.30), transparent 85%),
+    radial-gradient(closest-side at 50% 55%, rgba(124,58,237,0.75), rgba(124,58,237,0.30) 55%, transparent 100%);
   animation: smoke-pulse 6s ease-in-out infinite;
 }
 
@@ -558,4 +528,91 @@ img {
   .hero-glow, .hero-logo, .scroll-hint {
     animation: none;
   }
+}
+
+/* ===== Fondo animado "Clásico": aura que emerge del suelo + luces flotantes =====
+   Optimizado: solo transform/opacity (compositor/GPU), sin filter ni box-shadow
+   animados, capa fija aislada con contain, pocas capas y modo ligero. */
+.aura-scene {
+  --aura-a: rgba(139, 92, 246, .7);
+  --aura-b: rgba(105, 112, 220, .55);
+  --aura-c: rgba(196, 130, 250, .75);
+  --aura-dot: 178 140 255;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+}
+.aura-base {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #0a0820 0%, #120d2b 45%, #231a4a 100%);
+}
+.aura-ground {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 46vh;
+  transform-origin: 50% 100%;
+  background: radial-gradient(ellipse 60% 100% at 50% 100%, var(--aura-a) 0%, transparent 70%);
+  animation: aura-pulse 8s ease-in-out infinite;
+}
+.aura-plume {
+  position: absolute;
+  bottom: -6vh;
+  transform-origin: 50% 100%;
+  opacity: var(--o);
+  animation-name: aura-sway, aura-breathe;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+.aura-dots { position: absolute; inset: 0; }
+.aura-dot {
+  position: absolute;
+  top: 0;
+  animation: aura-rise linear infinite;
+}
+.aura-dot-core {
+  display: block;
+  border-radius: 9999px;
+  opacity: var(--alpha);
+  background: radial-gradient(circle, rgb(var(--aura-dot) / 1) 0%, rgb(var(--aura-dot) / .7) 40%, rgb(var(--aura-dot) / 0) 70%);
+  animation-name: aura-drift, aura-twinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+@keyframes aura-sway {
+  from { transform: rotate(calc(var(--a) - 5deg)) scaleY(.9); }
+  to   { transform: rotate(calc(var(--a) + 5deg)) scaleY(1.08); }
+}
+@keyframes aura-breathe { from { opacity: calc(var(--o) * .45); } to { opacity: var(--o); } }
+@keyframes aura-pulse { 0%, 100% { opacity: .65; transform: scaleY(.92); } 50% { opacity: 1; transform: scaleY(1.06); } }
+@keyframes aura-rise {
+  0%   { transform: translate3d(0, 104vh, 0); opacity: 0; }
+  12%  { opacity: 1; }
+  80%  { opacity: .85; }
+  100% { transform: translate3d(0, -8vh, 0); opacity: 0; }
+}
+@keyframes aura-drift { from { transform: translate3d(calc(var(--drift) * -1), 0, 0); } to { transform: translate3d(var(--drift), 0, 0); } }
+/* Titileo con opacity (compositor), no con filter: brightness (repinta cada frame) */
+@keyframes aura-twinkle { from { opacity: calc(var(--alpha) * .55); } to { opacity: var(--alpha); } }
+
+/* Celulares: menos capas grandes (son lo que más cuesta de rellenar) */
+@media (max-width: 640px) {
+  .aura-plume-extra { display: none; }
+}
+/* Equipos modestos (detectado por JS): sin "respiración" de las plumas */
+html.aura-lite .aura-plume { animation-name: aura-sway; }
+html.aura-lite .aura-plume-extra { display: none; }
+/* Pestaña oculta: pausa todo para no gastar batería ni CPU */
+html.app-hidden .aura-scene *,
+html.app-hidden .hero-glow,
+html.app-hidden .scroll-hint { animation-play-state: paused !important; }
+/* Accesibilidad / ahorro: sin movimiento, queda el degradado estático */
+@media (prefers-reduced-motion: reduce) {
+  .aura-scene *, .aura-ground { animation: none !important; }
+  .aura-dots { display: none; }
 }

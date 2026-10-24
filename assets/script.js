@@ -1,69 +1,69 @@
 (function () {
   "use strict";
 
+  var root = document.documentElement;
+
   // ---- Footer year --------------------------------------------------------
   var yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // ---- Starfield background ----------------------------------------------
-  (function starField() {
-    var canvas = document.getElementById("starfield");
-    if (!canvas) return;
-    var ctx = canvas.getContext("2d");
-    if (!ctx) return;
+  // ---- Fondo aurora: luces flotantes ---------------------------------------
+  // Se crean UNA sola vez; la animación la hace el CSS (transform/opacity en
+  // la GPU). No hay requestAnimationFrame ni trabajo de JS por frame.
+  (function aura() {
+    var box = document.getElementById("aura-dots");
+    if (!box) return;
 
-    var width, height, raf;
-    var dots = [];
+    var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) return;
 
-    function resize() {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-      var count = Math.min(140, Math.floor((width * height) / 12000));
-      dots = [];
-      for (var i = 0; i < count; i++) {
-        dots.push({
-          x: Math.random() * width,
-          y: Math.random() * height,
-          r: Math.random() * 1.6 + 0.3,
-          vx: (Math.random() - 0.5) * 0.25,
-          vy: (Math.random() - 0.5) * 0.25,
-          a: Math.random() * Math.PI * 2,
-          s: Math.random() * 0.02 + 0.005
-        });
-      }
+    // Equipo modesto: pocos núcleos, poca RAM o "ahorro de datos".
+    var cores = navigator.hardwareConcurrency || 4;
+    var mem = navigator.deviceMemory || 4;
+    var saveData = navigator.connection && navigator.connection.saveData;
+    var small = window.innerWidth < 640;
+    var lite = cores <= 4 || mem <= 2 || saveData;
+    if (lite) root.classList.add("aura-lite");
+
+    // Original: 56 luces. Aquí: 22 en escritorio, 14 en celular, 9 en modo ligero.
+    var count = lite ? 9 : small ? 14 : 22;
+
+    // Generador pseudoaleatorio con semilla: el fondo se ve igual en cada visita.
+    var t = 20261021;
+    function rnd() {
+      t += 0x6d2b79f5;
+      var r = Math.imul(t ^ (t >>> 15), 1 | t);
+      r ^= r + Math.imul(r ^ (r >>> 7), 61 | r);
+      return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
     }
 
-    function render() {
-      ctx.clearRect(0, 0, width, height);
-      for (var i = 0; i < dots.length; i++) {
-        var d = dots[i];
-        d.x += d.vx;
-        d.y += d.vy;
-        d.a += d.s;
-        if (d.x < 0) d.x = width;
-        if (d.x > width) d.x = 0;
-        if (d.y < 0) d.y = height;
-        if (d.y > height) d.y = 0;
+    var frag = document.createDocumentFragment();
+    for (var i = 0; i < count; i++) {
+      var size = 4 + Math.pow(rnd(), 1.6) * 13;
+      var wrap = document.createElement("div");
+      wrap.className = "aura-dot";
+      wrap.style.left = (rnd() * 100).toFixed(2) + "%";
+      wrap.style.animationDuration = (24 + rnd() * 26).toFixed(1) + "s";
+      wrap.style.animationDelay = (-rnd() * 50).toFixed(1) + "s";
 
-        var alpha = 0.4 + Math.sin(d.a) * 0.4;
-        ctx.beginPath();
-        ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(255,255,255," + alpha + ")";
-        ctx.shadowColor = "rgba(255,255,255,0.8)";
-        ctx.shadowBlur = 8;
-        ctx.fill();
-      }
-      raf = requestAnimationFrame(render);
+      var core = document.createElement("span");
+      core.className = "aura-dot-core";
+      core.style.width = core.style.height = size.toFixed(1) + "px";
+      core.style.setProperty("--drift", (10 + rnd() * 26).toFixed(1) + "px");
+      core.style.setProperty("--alpha", (0.5 + rnd() * 0.5).toFixed(2));
+      core.style.animationDuration = (5 + rnd() * 6).toFixed(1) + "s, " + (3 + rnd() * 4).toFixed(1) + "s";
+      core.style.animationDelay = (-i * 0.7).toFixed(1) + "s, " + (-i * 0.4).toFixed(1) + "s";
+
+      wrap.appendChild(core);
+      frag.appendChild(wrap);
     }
-
-    resize();
-    window.addEventListener("resize", resize);
-    render();
-
-    window.addEventListener("beforeunload", function () {
-      cancelAnimationFrame(raf);
-    });
+    box.appendChild(frag);
   })();
+
+  // ---- Pausar animaciones cuando la pestaña no se ve ------------------------
+  document.addEventListener("visibilitychange", function () {
+    root.classList.toggle("app-hidden", document.hidden);
+  });
 
   // ---- Scroll reveal --------------------------------------------------------
   (function scrollReveal() {
@@ -94,7 +94,6 @@
     if (hero) requestAnimationFrame(function () { hero.classList.add("is-visible"); });
   })();
 
-  // Note: APK downloads no longer need JavaScript — the button in index.html
-  // is a plain <a href="assets/apks/..." download> link, so the browser
-  // handles the download natively. Nothing else to wire up here.
+  // Nota: la descarga del APK no necesita JavaScript; el botón de index.html
+  // es un <a href="assets/apks/..." download> y el navegador la maneja solo.
 })();

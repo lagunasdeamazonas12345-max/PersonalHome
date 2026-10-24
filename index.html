@@ -24,8 +24,8 @@
     "name": "Gribits",
     "operatingSystem": "Android",
     "applicationCategory": "LifestyleApplication",
-    "softwareVersion": "2.0",
-    "fileSize": "1.9 MB",
+    "softwareVersion": "3.0",
+    "fileSize": "1.95 MB",
     "description": "¡Organiza tu rutina y lleva tu productividad a otro nivel! App de seguimiento de hábitos diarios, sistema de puntos, recompensas, calendario visual, estadísticas, asistente de IA y mucho más.",
     "author": { "@type": "Organization", "name": "Xactac" },
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
@@ -39,7 +39,20 @@
   <link rel="stylesheet" href="assets/style.css" />
 </head>
 <body>
-  <canvas id="starfield" aria-hidden="true"></canvas>
+  <!-- Fondo animado: aurora que emerge del suelo + luces flotantes.
+       Solo anima transform/opacity (se ejecuta en la GPU, sin JS por frame).
+       Las luces flotantes las genera assets/script.js. -->
+  <div class="aura-scene" id="aura" aria-hidden="true">
+    <div class="aura-base"></div>
+    <div class="aura-ground"></div>
+    <div class="aura-plume" style="left:36%;width:26vw;height:92vh;margin-left:-13vw;--a:-24deg;--o:.7;background:radial-gradient(ellipse 50% 100% at 50% 100%,var(--aura-a) 0%,transparent 72%);animation-duration:12s,9.6s;animation-delay:-2.3s,-1.7s"></div>
+    <div class="aura-plume" style="left:44%;width:9vw;height:96vh;margin-left:-4.5vw;--a:-12deg;--o:.8;background:radial-gradient(ellipse 50% 100% at 50% 100%,var(--aura-c) 0%,transparent 72%);animation-duration:9s,7.2s;animation-delay:-4.6s,-3.4s"></div>
+    <div class="aura-plume" style="left:50%;width:30vw;height:100vh;margin-left:-15vw;--a:-3deg;--o:.6;background:radial-gradient(ellipse 50% 100% at 50% 100%,var(--aura-a) 0%,transparent 72%);animation-duration:14s,11.2s;animation-delay:-6.9s,-5.1s"></div>
+    <div class="aura-plume" style="left:56%;width:10vw;height:94vh;margin-left:-5vw;--a:9deg;--o:.75;background:radial-gradient(ellipse 50% 100% at 50% 100%,var(--aura-b) 0%,transparent 72%);animation-duration:10s,8s;animation-delay:-9.2s,-6.8s"></div>
+    <div class="aura-plume" style="left:64%;width:26vw;height:88vh;margin-left:-13vw;--a:20deg;--o:.65;background:radial-gradient(ellipse 50% 100% at 50% 100%,var(--aura-c) 0%,transparent 72%);animation-duration:13s,10.4s;animation-delay:-11.5s,-8.5s"></div>
+    <div class="aura-plume aura-plume-extra" style="left:22%;width:20vw;height:78vh;margin-left:-10vw;--a:-38deg;--o:.55;background:radial-gradient(ellipse 50% 100% at 50% 100%,var(--aura-b) 0%,transparent 72%);animation-duration:15s,12s;animation-delay:0s,0s"></div>
+    <div class="aura-dots" id="aura-dots"></div>
+  </div>
 
   <!-- Navbar -->
   <nav class="navbar glass-surface">
@@ -54,9 +67,6 @@
 
   <!-- Hero -->
   <section class="hero">
-    <img src="assets/hero-portal.jpg" alt="" class="hero-bg" />
-    <div class="hero-overlay"></div>
-
     <div class="hero-content reveal" data-reveal="hero">
       <div class="hero-logo-wrap">
         <div class="hero-glow" aria-hidden="true"></div>
@@ -112,8 +122,8 @@
             <h3>Gribits</h3>
             <p>¡Organiza tu rutina y lleva tu productividad a otro nivel! App de seguimiento de hábitos diarios, sistema de puntos, recompensas, calendario visual, estadísticas, asistente de IA y mucho más.</p>
             <div class="app-tags">
-              <span class="tag">v2.0</span>
-              <span class="tag">1.9 MB</span>
+              <span class="tag">v3.0</span>
+              <span class="tag">1.95 MB</span>
               <span class="tag">Android</span>
             </div>
           </div>
