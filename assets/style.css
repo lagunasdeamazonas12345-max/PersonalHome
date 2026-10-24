@@ -616,3 +616,81 @@ html.app-hidden .scroll-hint { animation-play-state: paused !important; }
   .aura-scene *, .aura-ground { animation: none !important; }
   .aura-dots { display: none; }
 }
+
+/* ===== Guía de instalación en iOS (anclar a Inicio) ===== */
+.ios-guide {
+  margin-top: 1.5rem;
+  border-radius: 1rem;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  padding: 1.5rem;
+}
+@media (min-width: 768px) {
+  .ios-guide { padding: 2rem; }
+}
+.ios-head { text-align: center; max-width: 40rem; margin: 0 auto 2rem; }
+.ios-badge {
+  display: inline-block;
+  border-radius: 9999px;
+  background: hsla(var(--primary), 0.12);
+  color: hsl(var(--primary));
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.ios-head h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+  margin-bottom: 0.5rem;
+}
+.ios-head p {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: hsl(var(--muted-foreground));
+  margin-bottom: 1.25rem;
+}
+.ios-head strong, .ios-step strong { color: hsl(var(--foreground)); font-weight: 600; }
+
+.ios-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+@media (min-width: 700px) {
+  .ios-steps { grid-template-columns: 1fr 1fr; }
+}
+.ios-step {
+  border-radius: 0.875rem;
+  background: hsl(var(--secondary));
+  border: 1px solid hsl(var(--border));
+  padding: 1rem;
+}
+.ios-step-head { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; }
+.ios-step-head h4 {
+  margin: 0;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+}
+.ios-step .step-num { width: 2rem; height: 2rem; font-size: 0.8125rem; }
+.ios-step p {
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: hsl(var(--muted-foreground));
+  padding-top: 0;
+  margin-bottom: 0.875rem;
+}
+.ios-step img {
+  width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+  border: 1px solid hsl(var(--border));
+  background: #0a0820;
+}
